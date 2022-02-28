@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phone_book_app/phone_book.dart';
 import 'package:phone_book_app/resources/strings.dart';
 import 'package:phone_book_app/resources/theme.dart';
 
@@ -30,14 +31,7 @@ class _PhoneBookAppState extends State<PhoneBookApp> {
       themeMode: currentThemeMode,
       theme: PhoneBookTheme.light,
       darkTheme: PhoneBookTheme.dark,
-      home: Builder(builder: (context) {
-        return Container(
-          color: Theme.of(context).backgroundColor,
-          alignment: Alignment.center,
-          child: const Text('Teste'),
-        );
-      }),
-      // home: PhoneBook(onThemeModePressed: toggleThemeMode),
+      home: PhoneBook(onThemeModePressed: toggleThemeMode),
     );
   }
 }
