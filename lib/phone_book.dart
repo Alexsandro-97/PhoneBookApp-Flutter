@@ -34,7 +34,7 @@ class _PhoneBookState extends State<PhoneBook> {
                   ? Icons.dark_mode
                   : Icons.light_mode,
             ),
-          )
+          ),
         ],
       ),
       body: ListView.separated(
