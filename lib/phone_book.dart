@@ -23,7 +23,6 @@ class _PhoneBookState extends State<PhoneBook> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: theme.backgroundColor,
       appBar: AppBar(
         title: const Text(Strings.appName),
         actions: [
@@ -37,17 +36,22 @@ class _PhoneBookState extends State<PhoneBook> {
           ),
         ],
       ),
-      body: ListView.separated(
-        itemCount: contacts.length,
-        itemBuilder: (context, index) {
-          final contact = contacts[index];
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text('${contact.name}\n${contact.number}'),
-          );
-        },
-        separatorBuilder: (context, index) => const SizedBox(height: 4.0),
-      ),
+      body: contacts.isNotEmpty
+          ? ListView.separated(
+              itemCount: contacts.length,
+              itemBuilder: (context, index) {
+                final contact = contacts[index];
+                return Container(
+                  padding: const EdgeInsets.all(8.0),
+                  color: index % 2 == 0
+                      ? theme.backgroundColor
+                      : theme.primaryColor,
+                  child: Text('${contact.name}\n${contact.number}'),
+                );
+              },
+              separatorBuilder: (context, index) => const SizedBox(height: 4.0),
+            )
+          : const Text('Alguma coisa de errado não está certo'),
     );
   }
 }
