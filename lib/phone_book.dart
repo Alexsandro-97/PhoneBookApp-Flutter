@@ -16,8 +16,8 @@ class PhoneBook extends StatefulWidget {
 }
 
 class _PhoneBookState extends State<PhoneBook> {
-  final contacts = List<Contact>.from(contact_helper.smallContactList)
-    ..sort((a, b) => a.name.length.compareTo(b.name.length));
+  final contacts = List<Contact>.from(contact_helper.longContactList)
+    ..sort((a, b) => a.name.compareTo(b.name));
 
   @override
   Widget build(BuildContext context) {
@@ -37,21 +37,36 @@ class _PhoneBookState extends State<PhoneBook> {
         ],
       ),
       body: contacts.isNotEmpty
-          ? ListView.separated(
-              itemCount: contacts.length,
-              itemBuilder: (context, index) {
-                final contact = contacts[index];
-                return Container(
-                  padding: const EdgeInsets.all(8.0),
-                  color: index % 2 == 0
-                      ? theme.backgroundColor
-                      : theme.primaryColor,
-                  child: Text('${contact.name}\n${contact.number}'),
-                );
-              },
-              separatorBuilder: (context, index) => const SizedBox(height: 4.0),
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('Contatos:'),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    itemCount: contacts.length,
+                    itemBuilder: (context, index) {
+                      final contact = contacts[index];
+                      return Container(
+                        padding: const EdgeInsets.all(8.0),
+                        /* color: index % 2 == 0
+                            ? theme.backgroundColor
+                            : theme.primaryColor, */
+                        child: Text('${contact.name}\n${contact.number}'),
+                      );
+                    },
+                    separatorBuilder: (context, index) => const Divider(
+                      color: Colors.black54,
+                      height: 1.0,
+                      thickness: 1.0,
+                    ),
+                  ),
+                ),
+              ],
             )
-          : const Text('Alguma coisa de errado não está certo'),
+          : const Text('A sua lista de contato está vazia!'),
     );
   }
 }
