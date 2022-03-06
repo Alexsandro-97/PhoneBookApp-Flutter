@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:phone_book_app/models/contact.dart';
 import 'package:phone_book_app/resources/strings.dart';
@@ -45,24 +47,30 @@ class _PhoneBookState extends State<PhoneBook> {
                   child: Text('Contatos:'),
                 ),
                 Expanded(
-                  child: ListView.separated(
-                    itemCount: contacts.length,
-                    itemBuilder: (context, index) {
-                      final contact = contacts[index];
-                      return Container(
-                        padding: const EdgeInsets.all(8.0),
-                        /* color: index % 2 == 0
-                            ? theme.backgroundColor
-                            : theme.primaryColor, */
-                        child: Text('${contact.name}\n${contact.number}'),
-                      );
-                    },
-                    separatorBuilder: (context, index) => const Divider(
-                      color: Colors.black54,
-                      height: 1.0,
-                      thickness: 1.0,
-                    ),
-                  ),
+                  child: ListView.builder(
+                      itemCount: contacts.length,
+                      itemBuilder: (context, index) {
+                        final contact = contacts[index];
+                        final materialColor = Colors.primaries[
+                            Random().nextInt(Colors.primaries.length)];
+                        final names = contact.name.split(' ');
+                        final indentifier = names.first.characters.first +
+                            names.last.characters.first;
+                        final url = contact.picture;
+                        return Card(
+                          child: ListTile(
+                            title: Text(contact.name),
+                            subtitle: Text(contact.number),
+                            leading: CircleAvatar(
+                              foregroundImage:
+                                  url != null ? NetworkImage(url) : null,
+                              backgroundColor: materialColor.withOpacity(0.4),
+                              foregroundColor: materialColor.shade800,
+                              child: Text(indentifier),
+                            ),
+                          ),
+                        );
+                      }),
                 ),
               ],
             )
