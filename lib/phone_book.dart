@@ -1,9 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:phone_book_app/components/contact_list_tile.dart';
 import 'package:phone_book_app/models/contact.dart';
 import 'package:phone_book_app/resources/strings.dart';
 import 'package:phone_book_app/utils/contact_helper.dart' as contact_helper;
+import 'package:phone_book_app/view_models/contact_view_model.dart';
 
 class PhoneBook extends StatefulWidget {
   const PhoneBook({
@@ -20,6 +20,18 @@ class PhoneBook extends StatefulWidget {
 class _PhoneBookState extends State<PhoneBook> {
   final contacts = List<Contact>.from(contact_helper.longContactList)
     ..sort((a, b) => a.name.compareTo(b.name));
+  final favorites = <Contact>[];
+
+  void toggleFavorite(Contact contact) {
+    setState(() {
+      if (contact.isFavorite) {
+        favorites.remove(contact);
+      } else {
+        favorites.add(contact);
+      }
+      contact.isFavorite = !contact.isFavorite;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,39 +54,45 @@ class _PhoneBookState extends State<PhoneBook> {
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (favorites.isNotEmpty) ...[
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(Strings.favorites),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: favorites.length,
+                      itemBuilder: (context, index) {
+                        final contact = favorites[index];
+                        return buildListTile(context, index, contact);
+                      },
+                    ),
+                  ),
+                ],
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('Contatos:'),
+                  child: Text(Strings.contacts),
                 ),
                 Expanded(
+                  flex: 6,
                   child: ListView.builder(
                       itemCount: contacts.length,
                       itemBuilder: (context, index) {
                         final contact = contacts[index];
-                        final materialColor = Colors.primaries[
-                            Random().nextInt(Colors.primaries.length)];
-                        final names = contact.name.split(' ');
-                        final indentifier = names.first.characters.first +
-                            names.last.characters.first;
-                        final url = contact.picture;
-                        return Card(
-                          child: ListTile(
-                            title: Text(contact.name),
-                            subtitle: Text(contact.number),
-                            leading: CircleAvatar(
-                              foregroundImage:
-                                  url != null ? NetworkImage(url) : null,
-                              backgroundColor: materialColor.withOpacity(0.4),
-                              foregroundColor: materialColor.shade800,
-                              child: Text(indentifier),
-                            ),
-                          ),
-                        );
+                        return buildListTile(context, index, contact);
                       }),
                 ),
               ],
             )
-          : const Text('A sua lista de contato está vazia!'),
+          : const Text(Strings.errorMessageEmptyList),
+    );
+  }
+
+  Widget buildListTile(BuildContext context, int index, Contact contact) {
+    final viewModel = ContactViewModel(contact);
+    return ContactListTile(
+      contactViewModel: viewModel,
+      onItemPressed: () => toggleFavorite(contact),
     );
   }
 }
